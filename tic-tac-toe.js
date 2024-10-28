@@ -6,6 +6,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add event listeners to all squares
     squares.forEach((square, index) => {
         square.addEventListener("click", () => handleClick(square, index));
+        
+        // Add mouseover and mouseout event listeners for hover effect
+        square.addEventListener("mouseover", () => {
+            if (!gameState[index]) { // Only apply hover effect if square is empty
+                square.classList.add("hover");
+            }
+        });
+
+        square.addEventListener("mouseout", () => {
+            square.classList.remove("hover");
+        });
     });
 
     // Handle the square click event
