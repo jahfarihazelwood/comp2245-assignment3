@@ -1,15 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const squares = document.querySelectorAll("#board div"); // Select squares
-    let currentPlayer = "X"; // Track the current player
-    const gameState = Array(9).fill(null); // Initialize the game state
+    const squares = document.querySelectorAll("#board div");
+    let currentPlayer = "X";
+    const gameState = Array(9).fill(null); 
+    const statusDiv = document.getElementById("status");
 
-    // Add event listeners to all squares
+    const winningCombinations = [
+        [0, 1, 2], 
+        [3, 4, 5], 
+        [6, 7, 8], 
+        [0, 3, 6], 
+        [1, 4, 7], 
+        [2, 5, 8], 
+        [0, 4, 8],
+        [2, 4, 6] 
+    ];
+
+    
     squares.forEach((square, index) => {
         square.addEventListener("click", () => handleClick(square, index));
+
         
-        // Add mouseover and mouseout event listeners for hover effect
         square.addEventListener("mouseover", () => {
-            if (!gameState[index]) { // Only apply hover effect if square is empty
+            if (!gameState[index]) {
                 square.classList.add("hover");
             }
         });
@@ -19,19 +31,33 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Handle the square click event
+    
     function handleClick(square, index) {
-        // If the square is already filled, do nothing
-        if (gameState[index]) return;
+        
+        if (gameState[index] || checkWinner()) return;
 
-        // Update the square's content and class
         square.textContent = currentPlayer;
         square.classList.add(currentPlayer);
 
-        // Update the game state
         gameState[index] = currentPlayer;
 
-        // Switch the player for the next turn
+        if (checkWinner()) {
+            updateStatus(currentPlayer);
+            return;
+        }
+
         currentPlayer = currentPlayer === "X" ? "O" : "X";
+    }
+
+    function checkWinner() {
+        return winningCombinations.some(combination => {
+            const [a, b, c] = combination;
+            return gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c];
+        });
+    }
+
+    function updateStatus(winner) {
+        statusDiv.textContent = `Congratulations! ${winner} is the Winner!`;
+        statusDiv.classList.add("you-won");
     }
 });
